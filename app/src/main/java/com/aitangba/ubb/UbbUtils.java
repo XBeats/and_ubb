@@ -22,7 +22,8 @@ public class UbbUtils {
 		list.add(new ColorElement());
 		list.add(new CommonElement("strong", "strong"));
 		list.add(new CommonElement("em", "em"));
-		list.add(new CommonElement("up", "up"));
+		list.add(new CommonElement("up", "sup"));
+		list.add(new CommonElement("ub", "sub"));
 		list.add(new ImageElement("img", "img"));
 		list.add(new ImageElement("u", "u"));
 		return list;
