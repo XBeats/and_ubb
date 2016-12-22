@@ -29,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mTextView = (TextView) findViewById(R.id.text);
-        mTextView.setMovementMethod(LinkMovementMethod.getInstance());
-
         mTextView.setText(Html.fromHtml(UbbUtils.ubb2Html(str), mImageGetter, null));
     }
 
