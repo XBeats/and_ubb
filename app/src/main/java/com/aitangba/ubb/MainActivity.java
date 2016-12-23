@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import com.aitangba.ubb.utils.HtmlUtils;
 import com.aitangba.ubb.utils.UbbUtils;
 
 /**
@@ -22,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
             + "数据与表格中的数据构成的新样本的平均数记为μ1，表格中数据的平均数记为μ0，试判断μ0和μ1的大小，<b>（结论不要求证明）</b>";
     private TextView mTextView;
 
+    private static final String str1 = "（本小题13分）"
+            + "<img src=\"http://a.hiphotos.baidu.com/baike/w%3D268%3Bg%3D0/sign=c96039673bc79f3d8fe1e336829aaa2c/6a63f6246b600c338719a2501a4c510fd8f9a1c1.jpg\"/>";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,5 +33,6 @@ public class MainActivity extends AppCompatActivity {
 
         mTextView = (TextView) findViewById(R.id.text);
         mTextView.setText(UbbUtils.ubb2Html(mTextView, str));
+//        mTextView.setText(HtmlUtils.html2Html(mTextView, str1));
     }
 }

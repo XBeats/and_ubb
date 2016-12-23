@@ -15,6 +15,7 @@ import java.net.URL;
 /**
  * Created by fhf11991 on 2016/12/23.
  */
+
 public class UrlImageSpan extends ImageSpan {
 
     private WeakReference<TextView> mWeakReference;
