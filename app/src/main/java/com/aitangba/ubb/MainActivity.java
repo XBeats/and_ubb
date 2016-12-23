@@ -1,15 +1,11 @@
 package com.aitangba.ubb;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.widget.TextView;
+
+import com.aitangba.ubb.utils.UbbUtils;
 
 /**
  * Created by fhf11991 on 2016/12/22.

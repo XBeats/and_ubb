@@ -1,4 +1,4 @@
-package com.aitangba.ubb;
+package com.aitangba.ubb.utils;
 
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;

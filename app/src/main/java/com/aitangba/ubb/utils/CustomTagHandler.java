@@ -1,4 +1,4 @@
-package com.aitangba.ubb;
+package com.aitangba.ubb.utils;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -7,6 +7,8 @@ import android.text.Html;
 import android.text.Spannable;
 import android.util.Log;
 import android.widget.TextView;
+
+import com.aitangba.ubb.R;
 
 import org.xml.sax.XMLReader;
 
@@ -27,8 +29,8 @@ public class CustomTagHandler implements Html.TagHandler {
 
     private HashMap<String, String> mStringHashMap = new HashMap<>();
 
-    public void setStringHashMap(HashMap<String, String> stringHashMap) {
-        mStringHashMap = stringHashMap;
+    public HashMap<String, String> getStringHashMap() {
+        return mStringHashMap;
     }
 
     @Override
@@ -38,7 +40,6 @@ public class CustomTagHandler implements Html.TagHandler {
                 TextView textView = mWeakReference.get();
                 Context context = textView.getContext().getApplicationContext();
                 String source = mStringHashMap.get(tag);
-                Log.d("CustomTagHandler", "source = " + source);
 
                 Drawable drawable = context.getResources().getDrawable(R.mipmap.ic_launcher);
                 drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());

@@ -1,4 +1,4 @@
-package com.aitangba.ubb;
+package com.aitangba.ubb.utils;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -75,7 +75,7 @@ public class VerticalImageSpan extends ImageSpan {
         }
     }
 
-    public static int dp2px(Context context, float dpValue) {
+    private final int dp2px(Context context, float dpValue) {
         float scale = context.getResources().getDisplayMetrics().density;
         return (int)(dpValue * scale + 0.5F);
     }

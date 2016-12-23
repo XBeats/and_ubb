@@ -1,9 +1,8 @@
-package com.aitangba.ubb;
+package com.aitangba.ubb.utils;
 
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.MessageFormat;
@@ -14,11 +13,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 
- * @author fenghaifeng
- * @date 2016年12月22日
- *
+ * Created by fhf11991 on 2016/12/22.
  */
+
 public class UbbUtils {
 
 	private static final String MODE = "\\[{0}\\](.*?)\\[/{0}\\]";
@@ -37,16 +34,11 @@ public class UbbUtils {
 	}
 	
 	public static Spanned ubb2Html(TextView textView, String str) {
-		List<Element> list = getDefaultElements();
-		String html = toHtml(str, list);
 		CustomTagHandler customTagHandler = new CustomTagHandler();
 		customTagHandler.setTextView(textView);
-		for(Element element : list) {
-			if(element instanceof ImageElement) {
-				ImageElement imageElement = (ImageElement) element;
-				customTagHandler.setStringHashMap(imageElement.mStringHashMap);
-			}
-		}
+
+		String html = toHtml(str, getDefaultElements(), customTagHandler);
+		Log.d("UbbUtils", "html = " + html);
 
 		return Html.fromHtml(html, null, customTagHandler);
 	}
@@ -57,10 +49,13 @@ public class UbbUtils {
 	 * @param elements
 	 * @return
 	 */
-	private static String toHtml(String str, List<Element> elements) {
+	private static String toHtml(String str, List<Element> elements, CustomTagHandler customTagHandler) {
 		if(str == null) return null;
 
 		String input = str.replace("\n", "<br/>");
+		HashMap<String, String> map = customTagHandler == null ?
+				new HashMap<String, String>() : customTagHandler.getStringHashMap();
+
 		for(Element element : elements) {
 			String key = element.originLabel;
 			String regex = MessageFormat.format(MODE, key);
@@ -71,7 +66,7 @@ public class UbbUtils {
 			StringBuffer sb = new StringBuffer(); 
 		    while(matcher.find()) {
 		    	String content = matcher.group(1).trim();
-		    	String rightStr = element.getReplacement(content);
+		    	String rightStr = element.getReplacement(map, content);
 		    	matcher.appendReplacement(sb, rightStr); 
 		    } 
 		    matcher.appendTail(sb);
@@ -81,8 +76,6 @@ public class UbbUtils {
 		return input;
 	}
 
-
-	
 	public abstract static class Element {
 		
 		public String originLabel;
@@ -94,7 +87,8 @@ public class UbbUtils {
 			this.replaceLabel = replaceLabel;
 		}
 
-		public abstract String getReplacement(String content);
+		public abstract String getReplacement(HashMap<String, String> stringHashMap, String content);
+
 	}
 	
     public static class CommonElement extends Element {
@@ -104,7 +98,7 @@ public class UbbUtils {
 		}
 
 		@Override
-		public String getReplacement(String content) {
+		public String getReplacement(HashMap<String, String> stringHashMap, String content) {
 			return MessageFormat.format("<{0}>" + content + "</{0}>", replaceLabel);
 		}
 		
@@ -117,7 +111,7 @@ public class UbbUtils {
 		}
 
 		@Override
-		public String getReplacement(String content) {
+		public String getReplacement(HashMap<String, String> stringHashMap, String content) {
 			return MessageFormat.format("<{0} color=\"#FFFF66\">" + content + "</{0}>", replaceLabel);
 		}
 		
@@ -125,19 +119,16 @@ public class UbbUtils {
 	
     public static class ImageElement extends Element {
 
-		private HashMap<String, String> mStringHashMap = new HashMap<>();
-
 		public ImageElement(String originLabel, String replaceLabel) {
 			super(originLabel, replaceLabel);
 		}
 
 		@Override
-		public String getReplacement(String content) {
-			String tag = replaceLabel + mStringHashMap.size();
-			mStringHashMap.put(tag, content);
+		public String getReplacement(HashMap<String, String> stringHashMap, String content) {
+			String tag = replaceLabel + stringHashMap.size();
+			stringHashMap.put(tag, content);
 			return MessageFormat.format("<{0} />", tag);
 		}
-
 	}
 }
 
