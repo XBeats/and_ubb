@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 public class UbbUtils {
 
 	private static final String MODE_UBB = "\\[{0}\\](.*?)\\[/{0}\\]";
+	private static final String MODE_IMAGE = "<img src=\"(.*?)\"/?>";
 
 	private static List<Element> getDefaultElements () {
 		List<Element> list = new ArrayList<>();
@@ -27,8 +28,8 @@ public class UbbUtils {
 		list.add(new CommonElement("up", "sup"));
 		list.add(new CommonElement("ub", "sub"));
 		list.add(new CommonElement("u", "u"));
-		list.add(new ColorElement());
-		list.add(new ImageElement("img", "image"));
+		list.add(new ColorElement("color", "font"));
+		list.add(new ImgElement("img", "img"));
 		return list;
 	}
 	
@@ -36,28 +37,34 @@ public class UbbUtils {
 		CustomTagHandler customTagHandler = new CustomTagHandler();
 		customTagHandler.setTextView(textView);
 
-		String html = toHtml(str, getDefaultElements(), customTagHandler);
+		String input = str.replace("\n", "<br/>");
+		String ubb2html = toHtml(input, MODE_UBB, getDefaultElements(), customTagHandler);
 
-		return Html.fromHtml(html, null, customTagHandler);
+		List<Element> list = new ArrayList<>();
+		list.add(new ImageElement("img", "image"));
+		String html2format = toHtml(ubb2html, MODE_IMAGE, list, customTagHandler);
+
+		return Html.fromHtml(html2format, null, customTagHandler);
 	}
 
 	/**
 	 * 禁止ubb标签嵌套使用
 	 * @param ubbStr
+	 * @param format
 	 * @param elements
 	 * @param customTagHandler
      * @return
      */
-	private static String toHtml(String ubbStr, List<Element> elements, CustomTagHandler customTagHandler) {
+	private static String toHtml(String ubbStr, String format, List<Element> elements, CustomTagHandler customTagHandler) {
 		if(ubbStr == null) return null;
 
-		String input = ubbStr.replace("\n", "<br/>");
 		HashMap<String, String> map = customTagHandler == null ?
 				new HashMap<String, String>() : customTagHandler.getStringHashMap();
 
+		String input = ubbStr;
 		for(Element element : elements) {
 			String key = element.originLabel;
-			String regex = MessageFormat.format(MODE_UBB, key);
+			String regex = MessageFormat.format(format, key);
 			
 			Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);  //忽略大小写
 			Matcher matcher = pattern.matcher(input); 
@@ -105,15 +112,27 @@ public class UbbUtils {
     
    public static class ColorElement extends Element {
 		
-		public ColorElement() {
-			super("color", "font");
-		}
+		public ColorElement(String originLabel, String replaceLabel) {
+		   super(originLabel, replaceLabel);
+	   }
 
 		@Override
 		public String getReplacement(HashMap<String, String> stringHashMap, String content) {
 			return MessageFormat.format("<{0} color=\"#FFFF66\">" + content + "</{0}>", replaceLabel);
 		}
 		
+	}
+
+	public static class ImgElement extends Element {
+
+		public ImgElement(String originLabel, String replaceLabel) {
+			super(originLabel, replaceLabel);
+		}
+
+		@Override
+		public String getReplacement(HashMap<String, String> stringHashMap, String content) {
+			return MessageFormat.format("<{0} src=\"{1}\"/>", replaceLabel, content);
+		}
 	}
 	
     public static class ImageElement extends Element {
