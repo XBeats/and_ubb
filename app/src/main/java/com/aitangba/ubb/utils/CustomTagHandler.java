@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spannable;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.aitangba.ubb.R;
@@ -42,17 +41,14 @@ public class CustomTagHandler implements Html.TagHandler {
                 String source = mStringHashMap.get(tag);
 
                 Drawable drawable = context.getResources().getDrawable(R.mipmap.ic_launcher);
-                drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
 
-                VerticalImageSpan verticalImageSpan = new VerticalImageSpan(drawable);
-                verticalImageSpan.setTextView(textView);
-
-                ImageGetterAsyncTask getterTask = new ImageGetterAsyncTask(verticalImageSpan, source);
-                getterTask.execute();
+                UrlImageSpan urlImageSpan = new UrlImageSpan(drawable, source);
+                urlImageSpan.setTextView(textView);
+                urlImageSpan.execute();
 
                 int len = output.length();
                 output.append("\uFFFC");
-                output.setSpan(verticalImageSpan, len, output.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                output.setSpan(urlImageSpan, len, output.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
     }

@@ -2,7 +2,6 @@ package com.aitangba.ubb.utils;
 
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.widget.TextView;
 
 import java.text.MessageFormat;
@@ -18,8 +17,8 @@ import java.util.regex.Pattern;
 
 public class UbbUtils {
 
-	private static final String MODE = "\\[{0}\\](.*?)\\[/{0}\\]";
-	
+	private static final String MODE_UBB = "\\[{0}\\](.*?)\\[/{0}\\]";
+
 	private static List<Element> getDefaultElements () {
 		List<Element> list = new ArrayList<>();
 		list.add(new CommonElement("b", "b"));
@@ -38,27 +37,27 @@ public class UbbUtils {
 		customTagHandler.setTextView(textView);
 
 		String html = toHtml(str, getDefaultElements(), customTagHandler);
-		Log.d("UbbUtils", "html = " + html);
 
 		return Html.fromHtml(html, null, customTagHandler);
 	}
-	
+
 	/**
 	 * 禁止ubb标签嵌套使用
-	 * @param str
+	 * @param ubbStr
 	 * @param elements
-	 * @return
-	 */
-	private static String toHtml(String str, List<Element> elements, CustomTagHandler customTagHandler) {
-		if(str == null) return null;
+	 * @param customTagHandler
+     * @return
+     */
+	private static String toHtml(String ubbStr, List<Element> elements, CustomTagHandler customTagHandler) {
+		if(ubbStr == null) return null;
 
-		String input = str.replace("\n", "<br/>");
+		String input = ubbStr.replace("\n", "<br/>");
 		HashMap<String, String> map = customTagHandler == null ?
 				new HashMap<String, String>() : customTagHandler.getStringHashMap();
 
 		for(Element element : elements) {
 			String key = element.originLabel;
-			String regex = MessageFormat.format(MODE, key);
+			String regex = MessageFormat.format(MODE_UBB, key);
 			
 			Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);  //忽略大小写
 			Matcher matcher = pattern.matcher(input); 
