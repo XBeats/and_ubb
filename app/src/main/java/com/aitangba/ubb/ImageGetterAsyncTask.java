@@ -10,30 +10,28 @@ import java.net.URL;
  */
 public class ImageGetterAsyncTask extends AsyncTask<String, Void, Drawable> {
 
-    private URLDrawable mURLDrawable;
+    private VerticalImageSpan mVerticalImageSpan;
     private String mUrl;
 
-    public ImageGetterAsyncTask(URLDrawable urlDrawable, String url) {
-        mURLDrawable = urlDrawable;
+    public ImageGetterAsyncTask(VerticalImageSpan verticalImageSpan, String url) {
+        mVerticalImageSpan = verticalImageSpan;
         mUrl = url;
     }
 
     @Override
     protected Drawable doInBackground(String... params) {
-        Drawable drawable = null;
         try {
             URL url = new URL(mUrl);
-            drawable = Drawable.createFromStream(url.openStream(), "");
+            return Drawable.createFromStream(url.openStream(), "");
         } catch (Exception e) {
             return null;
         }
-        return drawable;
     }
 
     @Override
     protected void onPostExecute(Drawable result) {
         if (result != null) {
-            mURLDrawable.setDrawable(result);
+            mVerticalImageSpan.setDrawable(result);
         }
     }
 }

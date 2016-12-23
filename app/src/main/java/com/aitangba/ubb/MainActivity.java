@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.widget.TextView;
 
 /**
@@ -29,17 +32,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mTextView = (TextView) findViewById(R.id.text);
-        mTextView.setText(Html.fromHtml(UbbUtils.ubb2Html(str), mImageGetter, null));
+        mTextView.setText(UbbUtils.ubb2Html(mTextView, str));
     }
-
-    Html.ImageGetter mImageGetter = new Html.ImageGetter() {
-        @Override
-        public Drawable getDrawable(String source) {
-            URLDrawable urlDrawable = new URLDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
-            urlDrawable.setTextView(mTextView);
-            ImageGetterAsyncTask getterTask = new ImageGetterAsyncTask(urlDrawable, source);
-            getterTask.execute();
-            return urlDrawable;
-        }
-    };
 }
