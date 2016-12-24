@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Created by fhf11991 on 2016/12/23.
@@ -18,8 +19,9 @@ import java.net.URL;
 
 public class UrlImageSpan extends ImageSpan {
 
-    private WeakReference<TextView> mWeakReference;
     private Drawable mDrawable;
+
+    private WeakReference<TextView> mWeakReference;
 
     public void setTextView(TextView textView) {
         mWeakReference = new WeakReference(textView);
@@ -101,7 +103,10 @@ public class UrlImageSpan extends ImageSpan {
         protected Drawable doInBackground(String... params) {
             try {
                 URL url = new URL(mUrl);
-                return Drawable.createFromStream(url.openStream(), "");
+                URLConnection urlConnection = url.openConnection();
+                urlConnection.setConnectTimeout(10000);
+                urlConnection.setReadTimeout(10000);
+                return Drawable.createFromStream(urlConnection.getInputStream(), "");
             } catch (Exception e) {
                 return null;
             }
