@@ -30,10 +30,8 @@ public class UbbUtils {
      */
 	private static List<Element> getDefaultElements () {
 		List<Element> list = new ArrayList<>();
-		list.add(new CommonElement("em", "em"));
 		list.add(new CommonElement("up", "sup"));
 		list.add(new CommonElement("ub", "sub"));
-//		list.add(new CommonElement("u", "u"));
 		list.add(new ColorElement("color", "font"));
 		list.add(new ImgElement("img", "img"));
 		return list;
@@ -109,7 +107,7 @@ public class UbbUtils {
 				new HashMap<String, String>() : customTagHandler.getStringHashMap();
 
 		String input = ubbStr;
-		Element element = new ImageElement("img", "image");
+		String replaceLabel = "img";
 
 		Pattern pattern = Pattern.compile(MODE_IMAGE, PATTERN_FLAG);
 		Matcher matcher = pattern.matcher(input);
@@ -117,7 +115,9 @@ public class UbbUtils {
 		StringBuffer sb = new StringBuffer();
 		while(matcher.find()) {
 			String content = matcher.group(1).trim();
-			String rightStr = element.getReplacement(map, content);
+			String tag = replaceLabel + map.size();
+			map.put(tag, content);
+			String rightStr = MessageFormat.format("<{0} />", tag);
 			matcher.appendReplacement(sb, rightStr);
 		}
 		matcher.appendTail(sb);
@@ -178,20 +178,6 @@ public class UbbUtils {
 		@Override
 		public String getReplacement(HashMap<String, String> stringHashMap, String content) {
 			return MessageFormat.format("<{0} src=\"{1}\"/>", replaceLabel, content);
-		}
-	}
-	
-    public static class ImageElement extends Element {
-
-		public ImageElement(String originLabel, String replaceLabel) {
-			super(originLabel, replaceLabel);
-		}
-
-		@Override
-		public String getReplacement(HashMap<String, String> stringHashMap, String content) {
-			String tag = replaceLabel + stringHashMap.size();
-			stringHashMap.put(tag, content);
-			return MessageFormat.format("<{0} />", tag);
 		}
 	}
 }
