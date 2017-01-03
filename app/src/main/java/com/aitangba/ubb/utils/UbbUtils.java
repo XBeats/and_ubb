@@ -19,7 +19,7 @@ public class UbbUtils {
 
 	private static final String MODE_UNUSUAL_UBB = "\\[{0}\\](.*?)\\[/{0}\\]";
 	private static final String MODE_COMMON_UBB = "\\[(.*?)\\](.*?)\\[/\\1\\]";
-	private static final String MODE_IMAGE = "<img src=\"(.*?)\"/?>";
+	private static final String MODE_IMAGE = "<img (.*?)/?>";
 
 	private static final int PATTERN_FLAG = Pattern.CASE_INSENSITIVE; //matched case insensitively
 
@@ -49,9 +49,7 @@ public class UbbUtils {
 		CustomTagHandler customTagHandler = new CustomTagHandler();
 		customTagHandler.setTextView(textView);
 
-		String input = str.replace("\n", "<br/>");
-
-		String ubb2html = ubb2Html(input, getDefaultElements(), customTagHandler);
+		String ubb2html = ubb2Html(str, getDefaultElements(), customTagHandler);
 
 		String html2format = formatImageToHtml(ubb2html, customTagHandler);
 

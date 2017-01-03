@@ -15,6 +15,7 @@ import java.net.URLConnection;
 
 /**
  * Created by fhf11991 on 2016/12/23.
+ * 自定义ImageSpan 主要用于解决TextView显示内容不能居中的问题
  */
 
 public class UrlImageSpan extends ImageSpan {
@@ -25,6 +26,17 @@ public class UrlImageSpan extends ImageSpan {
 
     public void setTextView(TextView textView) {
         mWeakReference = new WeakReference(textView);
+    }
+
+    private int mWidth;
+    private int mHeight;
+
+    public void setWidth(int width) {
+        this.mWidth = width;
+    }
+
+    public void setHeight(int height) {
+        this.mHeight = height;
     }
 
     public UrlImageSpan(Drawable drawable, String source) {
@@ -76,8 +88,13 @@ public class UrlImageSpan extends ImageSpan {
         if(mWeakReference != null && mWeakReference.get() != null) {
             TextView textView = mWeakReference.get();
             Context context = textView.getContext().getApplicationContext();
-            int width = dp2px(context, drawable.getIntrinsicWidth());
-            int height = dp2px(context, drawable.getIntrinsicHeight());
+
+            int width = mWidth;
+            int height = mHeight;
+            if(width == 0 || height == 0) {
+                width = dp2px(context, drawable.getIntrinsicWidth());
+                height = dp2px(context, drawable.getIntrinsicHeight());
+            }
             drawable.setBounds(0, 0, width, height);
             mDrawable = drawable;
             textView.setText(textView.getText());
