@@ -12,7 +12,6 @@ import com.aitangba.ubb.R;
 import org.xml.sax.XMLReader;
 
 import java.lang.ref.WeakReference;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,16 +60,16 @@ public class CustomTagHandler implements Html.TagHandler {
         }
     }
 
-    private static final String MODE_IMAGE_ATTR = "{0}=\"(.*?)\"";
+    private static final String MODE_IMAGE_ATTR = "%s=(\\\\{0,2}\")(.*?)\\1";
     private final String getValue(String uri, String localName) {
 
-        String reg = MessageFormat.format(MODE_IMAGE_ATTR, localName);
+        String reg = String.format(MODE_IMAGE_ATTR, localName);
         Pattern pattern = Pattern.compile(reg, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(uri);
 
         String value = null;
         if(matcher.find()) {
-            value = matcher.group(1);
+            value = matcher.group(2);
         }
         return value;
     }
