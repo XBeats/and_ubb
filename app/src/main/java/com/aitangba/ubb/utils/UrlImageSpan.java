@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.URL;
@@ -133,9 +134,12 @@ public class UrlImageSpan extends ImageSpan {
                 InputStream inputStream = urlConnection.getInputStream();
 
                 String filename = mUrl.substring(mUrl.lastIndexOf("/") + 1);
-                if ((Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
-                        || Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT_WATCH)
-                        && (filename.toLowerCase().contains(".png") || (filename.toLowerCase().contains(".gif")))) {
+                final int sdkVersion = Build.VERSION.SDK_INT;
+                if ((sdkVersion == Build.VERSION_CODES.KITKAT
+                        || sdkVersion == Build.VERSION_CODES.KITKAT_WATCH
+                        || sdkVersion == Build.VERSION_CODES.LOLLIPOP )
+                    && (filename.toLowerCase().contains(".png")
+                        || (filename.toLowerCase().contains(".gif")))) {
                     //cache the inputStream into ByteArrayOutputStream
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                     byte[] buffer = new byte[1024];
@@ -150,16 +154,23 @@ public class UrlImageSpan extends ImageSpan {
                     GifDecoder mGifDecoder = new GifDecoder();
                     mGifDecoder.read(stream1);
                     final int n = mGifDecoder.getFrameCount();
+
+                    Drawable drawable;
                     if(n == 1) {
                         Bitmap bitmap = mGifDecoder.getFrame(1);
-                        return new BitmapDrawable(bitmap);
+                        drawable = new BitmapDrawable(bitmap);
                     } else if(n == 0) {
                         //second use the cache
                         InputStream stream2 = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-                        return Drawable.createFromStream(stream2, "");
+                        drawable = Drawable.createFromStream(stream2, "");
                     } else {
-                        return null;
+                        drawable = null;
                     }
+
+                    try {
+                        byteArrayOutputStream.close();
+                    } catch (IOException ioExc) {}
+                    return drawable;
                 }
                 return Drawable.createFromStream(inputStream, "");
             } catch (Exception e) {
