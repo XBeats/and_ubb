@@ -1,14 +1,20 @@
 package com.aitangba.ubb.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.text.style.ImageSpan;
 import android.widget.TextView;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
@@ -123,7 +129,39 @@ public class UrlImageSpan extends ImageSpan {
                 URLConnection urlConnection = url.openConnection();
                 urlConnection.setConnectTimeout(10000);
                 urlConnection.setReadTimeout(10000);
-                return Drawable.createFromStream(urlConnection.getInputStream(), "");
+
+                InputStream inputStream = urlConnection.getInputStream();
+
+                String filename = mUrl.substring(mUrl.lastIndexOf("/") + 1);
+                if ((Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
+                        || Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT_WATCH)
+                        && (filename.toLowerCase().contains(".png") || (filename.toLowerCase().contains(".gif")))) {
+                    //cache the inputStream into ByteArrayOutputStream
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = inputStream.read(buffer)) > -1 ) {
+                        byteArrayOutputStream.write(buffer, 0, len);
+                    }
+                    byteArrayOutputStream.flush();
+
+                    //first use the cache
+                    InputStream stream1 = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+                    GifDecoder mGifDecoder = new GifDecoder();
+                    mGifDecoder.read(stream1);
+                    final int n = mGifDecoder.getFrameCount();
+                    if(n == 1) {
+                        Bitmap bitmap = mGifDecoder.getFrame(1);
+                        return new BitmapDrawable(bitmap);
+                    } else if(n == 0) {
+                        //second use the cache
+                        InputStream stream2 = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+                        return Drawable.createFromStream(stream2, "");
+                    } else {
+                        return null;
+                    }
+                }
+                return Drawable.createFromStream(inputStream, "");
             } catch (Exception e) {
                 return null;
             }

@@ -24,13 +24,15 @@ public class MainActivity extends AppCompatActivity {
             + "<img src=\"http://latex.codecogs.com/gif.latex?\\sqrt{\\frac{a}{b}}\"><u><em><strong>就合计合计<></em></u><img alt=\"\" src=\"http://120.55.160.75/resources/img/math/2016-12-31/ace261e0-55d9-404d-b1bc-1efd78f8912b.png\" width=\"20px\" height=\"15px;\">";
     private TextView mTextView;
 
+    private static final String str1 = "\n"
+            + "<img src=\"http://120.55.160.75/resources/img/mathConvert/2017-01-11/4da403be682342f98978c075592a8ac9.png\"/>";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mTextView = (TextView) findViewById(R.id.text);
-        mTextView.setText(UbbUtils.ubb2Html(mTextView, str));
-
+        mTextView.setText(UbbUtils.ubb2Html(mTextView, str + str1));
     }
 }
