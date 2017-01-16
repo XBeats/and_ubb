@@ -135,9 +135,7 @@ public class UrlImageSpan extends ImageSpan {
 
                 String filename = mUrl.substring(mUrl.lastIndexOf("/") + 1);
                 final int sdkVersion = Build.VERSION.SDK_INT;
-                if ((sdkVersion == Build.VERSION_CODES.KITKAT
-                        || sdkVersion == Build.VERSION_CODES.KITKAT_WATCH
-                        || sdkVersion == Build.VERSION_CODES.LOLLIPOP )
+                if ((sdkVersion >= Build.VERSION_CODES.KITKAT)
                     && (filename.toLowerCase().contains(".png")
                         || (filename.toLowerCase().contains(".gif")))) {
                     //cache the inputStream into ByteArrayOutputStream
